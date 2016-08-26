@@ -39,7 +39,11 @@ public class PlantComponent : MonoBehaviour {
 
 	void OnMouseUp()
 	{
-		transform.position = CurrentSlot.transform.position;
+		if (CurrentSlot) {
+			transform.position = CurrentSlot.transform.position;
+		} else {
+			transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+		}
 	}
 
 	void FindAllSlots()
@@ -56,15 +60,21 @@ public class PlantComponent : MonoBehaviour {
 	}
 	
 	void CheckForSlotHighlights() {
+		bool foundSlot = false;
 		foreach (SlotResponder slot in Slots) {
 			Debug.Log ("Checking Slots...");
 			if (ShouldHighlightSlot (slot)) {
 				Debug.Log ("Should Highlight Slot");
 				slot.HighlightForHovering ();
 				CurrentSlot = slot;
+				foundSlot = true;
 			} else {
 				slot.ResetToStandardMaterial ();
 			}
+		}
+
+		if (!foundSlot) {
+			CurrentSlot = null;
 		}
 	}
 
@@ -73,13 +83,13 @@ public class PlantComponent : MonoBehaviour {
 		float offset = 0.5f;
 		float xMin = Slot.transform.position.x - offset;
 		float xMax = Slot.transform.position.x + offset;
-		float yMin = Slot.transform.position.y - offset;
-		float yMax = Slot.transform.position.y + offset;
+		float zMin = Slot.transform.position.z - offset;
+		float zMax = Slot.transform.position.z + offset;
 
 		float plantX = transform.position.x;
-		float plantY = transform.position.y;
+		float plantZ = transform.position.z;
 
-		if (plantX > xMin && plantX < xMax && plantY > yMin && plantX < yMax) {
+		if (plantX > xMin && plantX < xMax && plantZ > zMin && plantZ < zMax) {
 			return true;
 		} else {
 			return false;
