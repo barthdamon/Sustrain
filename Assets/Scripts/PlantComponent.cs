@@ -9,10 +9,11 @@ public class PlantComponent : MonoBehaviour {
 	private List<SlotResponder> Slots = new List<SlotResponder> ();
 
 	private SlotResponder CurrentSlot;
+	private Vector3 StartingPosition;
 
 	// Use this for initialization
 	void Start () {
-		
+		StartingPosition = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -42,7 +43,7 @@ public class PlantComponent : MonoBehaviour {
 		if (CurrentSlot) {
 			transform.position = CurrentSlot.transform.position;
 		} else {
-			transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+			transform.position = StartingPosition;
 		}
 	}
 
@@ -94,6 +95,11 @@ public class PlantComponent : MonoBehaviour {
 		} else {
 			return false;
 		}
+	}
+
+	public bool IsSlotted()
+	{
+		return CurrentSlot != null;
 	}
 
 
