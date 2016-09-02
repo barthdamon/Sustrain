@@ -6,6 +6,8 @@ public class SlotResponder : MonoBehaviour {
 	public Material HighlightedMaterial;
 	public Vector2 Coordinates;
 
+	public PlantProperty PastProperty;
+
 	Material StandardMaterial;
 
 	// Use this for initialization
