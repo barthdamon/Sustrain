@@ -13,11 +13,9 @@ public class ResourceInfoUIController : MonoBehaviour {
 	// DetailText
 	public Text FuelColorText;
 	public Text FuelShapeText;
-	public Text FuelSizeText;
 
 	public Text FootprintColorText;
 	public Text FootprintShapeText;
-	public Text FootprintSizeText;
 
 	// Use this for initialization
 	void Start () {
@@ -31,22 +29,35 @@ public class ResourceInfoUIController : MonoBehaviour {
 
 	public void SetForPlantComponent(PlantComponent Plant)
 	{
+		ToggleForSlot (false);
 		PlantProperty PP = Plant.PlantProperty;
 		OutputText.text = "Output: " + PP.ProductionValue.ToString();
 
 		FuelColorText.text = "Color: " + PP.Fuel.Color.ToString ();
 		FuelShapeText.text = "Shape: " + PP.Fuel.Shape.ToString ();
-		FuelSizeText.text = "Size: " + PP.Fuel.Size.ToString ();
+//		FuelSizeText.text = "Size: " + PP.Fuel.Size.ToString ();
 
 		FootprintColorText.text = "Color: " + PP.Footprint.Color.ToString ();
 		FootprintShapeText.text = "Shape: " + PP.Footprint.Shape.ToString ();
-		FootprintSizeText.text = "Size: " + PP.Footprint.Size.ToString ();
+//		FootprintSizeText.text = "Size: " + PP.Footprint.Size.ToString ();
 //		FuelText.text = Plant.PlantProperty.ProductionValue;
 		
 	}
 
-	public void SetForSlotFootprint(SlotResponder Slot)
+	public void SetForSlotFootprint(PlantProperty Plant)
 	{
+		ToggleForSlot (true);
+		OutputText.text = "Slot";
 		// Remove unecessary fuel and output elements, just have footprint
+		FootprintColorText.text = "Color: " + Plant.Footprint.Color.ToString ();
+		FootprintShapeText.text = "Shape: " + Plant.Footprint.Shape.ToString ();
+	}
+
+	void ToggleForSlot(bool isSlot)
+	{
+//		OutputText.enabled = !isSlot;
+		FuelColorText.enabled = !isSlot;
+		FuelShapeText.enabled = !isSlot;
+		FuelText.enabled = !isSlot;
 	}
 }

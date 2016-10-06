@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour {
 	private Vector2[] Grid;
 	private List<PlantComponent> ActivePlantComponents;
 
+	public GameObject CurrentlySelected;
+
 	// Use this for initialization
 	void Start () {
 
@@ -31,6 +33,9 @@ public class GameManager : MonoBehaviour {
 		// Do some animation then calculate resources...
 		CalculateResources();
 		SpawnPlants ();
+		foreach (PlantComponent component in ActivePlantComponents) {
+			component.UpdateFootprint ();
+		}
 	}
 
 	public void SpawnPlants()
