@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,10 +7,17 @@ public class SurviosTestAlgosQ3 : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		// coin and trap positions mimic example board
 		Vector2[] coinPositions = new Vector2[] {
-			new Vector2 (0, 4),
-			new Vector2 (0, 0),
-			new Vector2 (4, 4)
+			new Vector2 (0, 3),
+			new Vector2 (1, 4),
+			new Vector2 (0, 1),
+			new Vector2 (1, 0),
+			new Vector2 (3, 0),
+			new Vector2 (4, 1),
+// uncomment to test unable to collect all coins
+// 			new Vector2 (4, 4)
 		};
 
 		Vector2[] trapPositions = new Vector2[] {
@@ -18,9 +26,8 @@ public class SurviosTestAlgosQ3 : MonoBehaviour {
 			new Vector2 (4, 4),
 			new Vector2 (4, 3)
 		};
-
-		// Indexes of positions on board start @ 0
-		GameBoard gameBoard = new GameBoard (5, 5, new Vector2 (0, 0), trapPositions, coinPositions);
+			
+		GameBoard gameBoard = new GameBoard (5, 5, new Vector2 (2, 2), trapPositions, coinPositions);
 		if (gameBoard.CanCollectAllCoins ()) {
 			Debug.Log ("Gameboard can collect all coins");
 		} else {
@@ -53,15 +60,14 @@ public class Coin {
 
 }
 
-public class Move {
-	public List<Vector2> cells = new List<Vector2>();
+public struct Move {
+	public List<Vector2> cells;
 	public Vector2 endLocation;
 
 	public Move(Vector2 endLocation, Vector2[] crossingCells) {
 		this.endLocation = endLocation;
-		foreach (Vector2 cell in crossingCells) {
-			cells.Add (cell);
-		}
+		cells = new List<Vector2> ();
+		cells.AddRange (crossingCells);
 		cells.Add (endLocation);
 	}
 }
@@ -87,29 +93,24 @@ public class GameBoard {
 		}
 	}
 
+	// THIS IS THE FUNCTION THAT ANSWERS THE QUESTION :)
 	public bool CanCollectAllCoins() {
 
 		// Calculate reachability of each coin
-		foreach (Coin coin in coins) {
-			FindWayToCoin(startingPosition, coin);
-		}
-
-		// Check if each coin ended up reaching start
 		bool allCoinsReached = true;
 		foreach (Coin coin in coins) {
+			FindWayToCoin(startingPosition, coin);
 			if (!coin.isReachable) {
 				allCoinsReached = false;
 			}
 		}
-
 		return allCoinsReached;
 	}
-
-	// THIS IS THE FUNCTION THAT ANSWERS THE QUESTION
+		
 	void FindWayToCoin(Vector2 position, Coin coin) {
 		if (!coin.isReachable) {
 			List<Move> moves = GetMovesFromPosition (position);
-			// was the coin found
+			// was the coin found?
 			if (coin.MovesCross(moves)) {
 				return;
 			}
@@ -122,38 +123,29 @@ public class GameBoard {
 			}
 		}
 	}
-
+		
 	List<Move> GetMovesFromPosition(Vector2 position) {
 
 		List<Move> possibleMoves = GeneratePossibleMoves (position);
-		List<Move> legitMoves = new List<Move> ();
-
-		foreach (Move move in possibleMoves) {
-			bool legit = true;
-
-			// has to be within the bounds of the grid
-			if ((move.endLocation.x > xLength - 1) || (move.endLocation.x < 0)) {
-				legit = false;
-			}
-			if ((move.endLocation.y > yLength - 1) || (move.endLocation.y < 0)) {
-				legit = false;
-			}
-
-			// can't have a trap
-			foreach (Vector2 trap in trapPositions) {
-				if (trap == move.endLocation) {
-					legit = false;
-				}
-			}
-
-			if (legit) {
-//				Debug.Log ("Move is legit to: " + move.endLocation.ToString() + " from: " + position.ToString());
-				legitMoves.Add (move);
-			} else {
-//				Debug.Log ("Move not Legit to: " + move.endLocation.ToString() + " from: " + position.ToString());
+		List<Move> legitMoves = possibleMoves.Where( move => 
+			// needs to land on the board
+			!((move.endLocation.x > xLength - 1) || (move.endLocation.x < 0))
+			&&
+			!((move.endLocation.y > yLength - 1) || (move.endLocation.y < 0))
+			&&
+			// can't land on a trap
+			!MoveHitsTrap(move)
+		).ToList();
+		return legitMoves;
+	}
+		
+	bool MoveHitsTrap(Move move) {
+		foreach (Vector2 trap in trapPositions) {
+			if (trap == move.endLocation) {
+				return true;
 			}
 		}
-		return legitMoves;
+		return false;
 	}
 
 

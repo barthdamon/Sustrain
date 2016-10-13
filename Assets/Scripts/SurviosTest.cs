@@ -3,17 +3,16 @@ using System.Collections;
 
 public class SurviosTest : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		Debug.Log(FilterText ("fuck this I'm going to eat poopsoup then shit myself"));
-	}
-
 	string[] dirtyWords = new string[] {
-		"fuck",
 		"shit",
-		"poopsoup"
+		"ass"
 	};
 
+
+	// Use this for initialization
+	void Start () {
+		Debug.Log(FilterText ("A healthy ass can shit fertilizer"));
+	}
 
 	string FilterText(string dirtyText) {
 
@@ -24,11 +23,12 @@ public class SurviosTest : MonoBehaviour {
 			char c = dirtyText[j];
 			currentWord += c.ToString();
 			string trimmedCurrent = currentWord.Trim ();
+			// if end of word or end of string...
 			if ((char.IsWhiteSpace (c)) || (j == dirtyText.Length - 1)) {
 				if (CheckIfDirty (trimmedCurrent)) {
 					filteredText += CleanString(trimmedCurrent);
 					if (char.IsWhiteSpace (c)) {
-						// add back space if it isn't the last word
+						// add back space if it got trimmed
 						filteredText += " ";
 					}
 				} else {
